@@ -36,8 +36,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/taskflow/admin", AdminRoutes);
-app.use("/taskflow/employee", EmployeeRoutes);
+app.use("/admin", AdminRoutes);
+app.use("/employee", EmployeeRoutes);
 // 🏠 Health check route (important in production)
 app.get("/", (req, res) => {
   res.status(200).json({
