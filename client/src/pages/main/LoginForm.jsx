@@ -51,7 +51,7 @@ const LoginForm = () => {
     const validationError = validate();
     if (validationError) {
       setError(validationError);
-      toast.error(validationError); 
+      toast.error(validationError);
       return;
     }
 
@@ -76,17 +76,18 @@ const LoginForm = () => {
 
       localStorage.setItem(
         `${role}`,
-        JSON.stringify(res.data.admin || res.data.employee)
+        JSON.stringify(res.data.admin || res.data.employee),
       );
 
       toast.success(res.data.message);
 
-      navigate(`/${role}`);
+      setTimeout(() => {
+        navigate(`/${role}`);
+      }, 1000);
     } catch (err) {
       console.error(err);
 
-      const message =
-        err.response?.data?.message || "Login failed. Try again.";
+      const message = err.response?.data?.message || "Login failed. Try again.";
 
       setError(message);
       toast.error(message); // ✅ added
@@ -97,12 +98,10 @@ const LoginForm = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gray-50">
-      
       {/* ✅ Toast Container (added, no UI change) */}
       <ToastContainer position="top-right" autoClose={3000} />
 
       <div className="w-full max-w-md bg-white border border-gray-100 rounded-xl p-8 shadow-sm">
-        
         <div className="text-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Welcome back</h2>
           <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
@@ -133,7 +132,6 @@ const LoginForm = () => {
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
-          
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-lg">
               {error}
