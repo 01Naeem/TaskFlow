@@ -18,7 +18,7 @@ import { ToastContainer } from "react-toastify";
 const App = () => {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={1000} />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<LoginForm />} />
