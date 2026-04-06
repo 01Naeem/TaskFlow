@@ -11,6 +11,8 @@ const EmployeeRoutes = require("./routes/employee_routes");
 // 🔐 Load environment variables
 dotenv.config();
 
+console.log(process.env.MONGODB_URI); 
+
 const PORT = process.env.PORT || 5000;
 
 const app = express();
@@ -19,17 +21,13 @@ const app = express();
 connectDataBase();
 
 // 🌐 Middlewares
-app.use(cors({
-  origin: "http://localhost:5173", // your frontend URL
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/taskflow/admin", AdminRoutes);
 app.use("/taskflow/employee", EmployeeRoutes);
-
 // 🏠 Health check route (important in production)
 app.get("/", (req, res) => {
   res.status(200).json({
