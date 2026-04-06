@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <StrictMode>
-      <App />
+      <App position="top-right" autoClose={3000}/>
     </StrictMode>
   </BrowserRouter>,
 );

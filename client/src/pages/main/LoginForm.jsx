@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+// ✅ Toastify import
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const LoginForm = () => {
   const [role, setRole] = useState("employee");
   const navigate = useNavigate();
@@ -15,7 +19,6 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ✅ handle input change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -25,7 +28,6 @@ const LoginForm = () => {
     }));
   };
 
-  // ✅ basic validation
   const validate = () => {
     if (!formData.email || !formData.password) {
       return "All fields are required";
@@ -41,14 +43,16 @@ const LoginForm = () => {
 
     return null;
   };
-  // ✅ submit handler
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     const validationError = validate();
     if (validationError) {
-      return setError(validationError);
+      setError(validationError);
+      toast.error(validationError); 
+      return;
     }
 
     try {
@@ -64,20 +68,28 @@ const LoginForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // if using cookies/session
+          withCredentials: true,
         },
       );
 
       console.log("✅ Login success:", res.data);
-      // Store user Object in localStorage
-      localStorage.setItem(`${role}`, JSON.stringify(res.data.admin || res.data.employee));
-      navigate(`/${role}`);
 
-      // 🔁 redirect logic (add navigate)
+      localStorage.setItem(
+        `${role}`,
+        JSON.stringify(res.data.admin || res.data.employee)
+      );
+
+      toast.success(res.data.message);
+
+      navigate(`/${role}`);
     } catch (err) {
       console.error(err);
 
-      setError(err.response?.data?.message || "Login failed. Try again.");
+      const message =
+        err.response?.data?.message || "Login failed. Try again.";
+
+      setError(message);
+      toast.error(message); // ✅ added
     } finally {
       setLoading(false);
     }
@@ -85,14 +97,17 @@ const LoginForm = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gray-50">
+      
+      {/* ✅ Toast Container (added, no UI change) */}
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <div className="w-full max-w-md bg-white border border-gray-100 rounded-xl p-8 shadow-sm">
-        {/* HEADER */}
+        
         <div className="text-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Welcome back</h2>
           <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
         </div>
 
-        {/* ROLE SWITCH */}
         <div className="flex bg-gray-100 rounded-lg p-1 mb-6">
           <button
             onClick={() => setRole("employee")}
@@ -117,15 +132,14 @@ const LoginForm = () => {
           </button>
         </div>
 
-        {/* FORM */}
         <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* ERROR MESSAGE */}
+          
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2 rounded-lg">
               {error}
             </div>
           )}
-          {/* EMAIL */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email address
@@ -140,7 +154,6 @@ const LoginForm = () => {
             />
           </div>
 
-          {/* PASSWORD */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -155,7 +168,6 @@ const LoginForm = () => {
             />
           </div>
 
-          {/* OPTIONS */}
           <div className="flex items-center justify-between text-sm">
             <label className="flex items-center gap-2 text-gray-600">
               <input
@@ -173,7 +185,6 @@ const LoginForm = () => {
             </button>
           </div>
 
-          {/* SUBMIT */}
           <button
             type="submit"
             className="w-full py-2.5 text-sm font-medium rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition"
@@ -182,7 +193,6 @@ const LoginForm = () => {
           </button>
         </form>
 
-        {/* FOOTER */}
         <p className="text-xs text-gray-500 text-center mt-6">
           Don’t have an account?{" "}
           <span className="text-gray-900 font-medium cursor-pointer">
