@@ -13,6 +13,7 @@ import EmployeeLayout from "./layouts/EmployeeLayout";
 import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (

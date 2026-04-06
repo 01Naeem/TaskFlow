@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 // ✅ Toastify import
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const LoginForm = () => {
@@ -97,10 +97,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gray-50">
-      {/* ✅ Toast Container (added, no UI change) */}
-      
-
+    <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gray-50">      
       <div className="w-full max-w-md bg-white border border-gray-100 rounded-xl p-8 shadow-sm">
         <div className="text-center mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Welcome back</h2>
