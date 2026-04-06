@@ -21,7 +21,10 @@ const app = express();
 connectDataBase();
 
 // 🌐 Middlewares
-app.use(cors());
+app.use(cors({
+  origin: "https://task-flow-b9qj1btpt-01naeems-projects.vercel.app",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
