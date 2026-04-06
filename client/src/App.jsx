@@ -17,6 +17,7 @@ import EmployeeProfile from "./pages/employee/EmployeeProfile";
 const App = () => {
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<LoginForm />} />

@@ -99,7 +99,7 @@ const LoginForm = () => {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gray-50">
       {/* ✅ Toast Container (added, no UI change) */}
-      <ToastContainer position="top-right" autoClose={3000} />
+      
 
       <div className="w-full max-w-md bg-white border border-gray-100 rounded-xl p-8 shadow-sm">
         <div className="text-center mb-6">
