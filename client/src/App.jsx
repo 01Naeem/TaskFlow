@@ -14,6 +14,7 @@ import EmployeeTasks from "./pages/employee/EmployeeTasks";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import EmployeeProfile from "./pages/employee/EmployeeProfile";
 import { ToastContainer } from "react-toastify";
+import Profile from "./pages/admin/Profile";
 
 const App = () => {
   return (
@@ -52,6 +53,7 @@ const App = () => {
             />
             <Route path="tasks" element={<Tasks />} />
             <Route path="tasks/assign" element={<AssignTask />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Route>
       </Routes>

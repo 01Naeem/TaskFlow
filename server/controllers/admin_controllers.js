@@ -4,7 +4,7 @@ const TaskModel = require("../models/task_model");
 const generatePassword = require("../utils/generatePassword");
 const bcrypt = require("bcrypt");
 const sendEmail = require("../services/email.service");
-const sendTaskEmail  = require("../services/sendTaskEmail");
+const sendTaskEmail = require("../services/sendTaskEmail");
 
 const AdminLogin = async (req, res) => {
   try {
@@ -234,7 +234,8 @@ const Employees = async (req, res) => {
 
 const AssignTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, priority, dueDate, createdBy } = req.body;
+    const { title, description, assignedTo, priority, dueDate, createdBy } =
+      req.body;
 
     // ✅ 1. VALIDATION
     if (!title || !assignedTo) {
@@ -370,6 +371,58 @@ const ApproveTask = async (req, res) => {
     });
   }
 };
+
+const GetAdminProfile = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    // ✅ 1. VALIDATION
+    if (!adminId) {
+      return res.status(400).json({
+        success: false,
+        message: "Admin ID is required",
+      });
+    }
+
+    // ✅ 2. FIND ADMIN (exclude password)
+    const admin = await AdminModel.findById(adminId).select("-password");
+
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    // ✅ 3. OPTIONAL: ADD STATS (dynamic or placeholder)
+    const data = {
+      ...admin.toObject(),
+      stats: {
+        employees: 0, // replace with real count later
+        tasks: 0,
+        departments: 0,
+        active: 0,
+      },
+    };
+
+    // ✅ 4. SUCCESS RESPONSE
+    return res.status(200).json({
+      success: true,
+      message: "Admin profile fetched successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("🔴 GetAdminProfile Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { GetAdminProfile };
+
 module.exports = {
   AdminLogin,
   CreateEmployee,
@@ -378,4 +431,5 @@ module.exports = {
   GetTasks,
   DeleteTask,
   ApproveTask,
+  GetAdminProfile,
 };

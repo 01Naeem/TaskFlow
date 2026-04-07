@@ -10,5 +10,6 @@ router.post("/tasks/assign", AdminControllers.AssignTask);
 router.get("/tasks", AdminControllers.GetTasks);
 router.delete("/tasks/delete/:id", AdminControllers.DeleteTask);
 router.put("/tasks/final-approve/:id", AdminControllers.ApproveTask);
+router.get("/profile/:adminId", AdminControllers.GetAdminProfile);
 
 module.exports = router;
