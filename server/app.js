@@ -7,37 +7,48 @@ const connectDataBase = require("./config/database_connection");
 const AdminRoutes = require("./routes/admin_routes");
 const EmployeeRoutes = require("./routes/employee_routes");
 
-
 // 🔐 Load environment variables
 dotenv.config();
 
-console.log(process.env.MONGODB_URI); 
-
 const PORT = process.env.PORT || 5000;
-
 const app = express();
 
-// 🔌 Connect Database
+// Connect Database
 connectDataBase();
 
-// 🌐 Middlewares
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || origin.includes("vercel.app")) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
+// Middlewares
+// app.use(cors({
+//   origin: function(origin, callback) {
+//     if (!origin || origin.includes("vercel.app")) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   credentials: true
+// }));
 
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (origin.includes("localhost:5173") || origin.includes("vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/admin", AdminRoutes);
 app.use("/employee", EmployeeRoutes);
+
 // 🏠 Health check route (important in production)
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -47,7 +58,7 @@ app.get("/", (req, res) => {
   });
 });
 
-// ❌ 404 Handler (must be after routes)
+// 404 Handler (must be after routes)
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
@@ -55,7 +66,7 @@ app.use((req, res, next) => {
   });
 });
 
-// 🔥 Global Error Handler
+//  Global Error Handler
 app.use((err, req, res, next) => {
   console.error("🔴 Server Error:", err.stack);
 
@@ -65,7 +76,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 🚀 Start Server
+//  Start Server
 app.listen(PORT, () => {
   console.log(`
 🟢 Server Started Successfully
