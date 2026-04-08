@@ -27,6 +27,12 @@ const TaskSchema = new mongoose.Schema(
       index: true, // 🔥 improves query performance
     },
 
+    // 🧑‍💼 ASSIGNED BY ADMIN
+    assignedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+    },
+
     // ⭐ IMPORTANT FLAG
     important: {
       type: Boolean,
@@ -57,12 +63,6 @@ const TaskSchema = new mongoose.Schema(
         },
       },
     ],
-
-    // 🧑‍💼 ASSIGNED BY ADMIN
-    assignedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Admin",
-    },
 
     approvedBy: {
       type: mongoose.Schema.Types.ObjectId,
