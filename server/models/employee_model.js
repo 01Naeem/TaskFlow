@@ -54,6 +54,11 @@ const userSchema = new mongoose.Schema(
 
     // 🔥 CREATED BY (ADMIN INFO)
     createdBy: {
+      adminId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Admin",
+        required: true,
+      },
       name: {
         type: String,
         required: true,

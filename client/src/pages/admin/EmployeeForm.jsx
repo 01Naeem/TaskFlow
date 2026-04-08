@@ -46,17 +46,19 @@ const EmployeeForm = () => {
       const payload = {
         ...form,
         createdBy: {
+          _id: admin?.id,
           name: admin?.name || "Admin",
           email: admin?.email || "admin@example.com",
         },
         createdAt: new Date().toISOString(), // 🔥 bonus
       };
 
-      console.log("Final Payload:", payload);
-
       // 🔥 API CALL
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/admin/employees/create-employee`, payload);
-      console.log(res.data)
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/admin/employees/create-employee`,
+        payload,
+      );
+      console.log(res.data);
 
       navigate("/admin/employees");
     } catch (error) {

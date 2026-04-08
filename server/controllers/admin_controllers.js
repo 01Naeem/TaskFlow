@@ -113,8 +113,8 @@ const CreateEmployee = async (req, res) => {
     }
 
     // 🔐 3. GET ADMIN FROM TOKEN (BEST PRACTICE)
-    const adminName = req.body.createdBy?.name || "Admin";
-    const adminEmail = req.body.createdBy?.email || "admin@example.com";
+    // const adminName = req.body.createdBy?.name || "Admin";
+    // const adminEmail = req.body.createdBy?.email || "admin@example.com";
 
     // 🔥 4. GENERATE + HASH PASSWORD
     const rawPassword = generatePassword(8);
@@ -131,12 +131,11 @@ const CreateEmployee = async (req, res) => {
       phone,
       joiningDate,
       createdBy: {
-        name: adminName,
-        email: adminEmail,
+        adminId: createdBy._id,
+        name: createdBy.name,
+        email: createdBy.email,
       },
     });
-
-    console.log(adminName);
 
     // 📧 6. SEND EMAIL (NON-BLOCKING)
     // ✅ Send email (clean)
@@ -146,7 +145,7 @@ const CreateEmployee = async (req, res) => {
       password: rawPassword,
       department,
       designation,
-      adminName,
+      adminName: createdBy.name,
     }).catch((err) => console.error(err));
 
     // ✅ 7. RESPONSE
@@ -389,7 +388,7 @@ const GetAdminProfile = async (req, res) => {
     }
 
     // ✅ 2. FIND ADMIN (exclude password)
-    const admin = await AdminModel.findById(adminId)
+    const admin = await AdminModel.findById(adminId);
 
     if (!admin) {
       return res.status(404).json({
