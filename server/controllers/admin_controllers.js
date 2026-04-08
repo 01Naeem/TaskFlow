@@ -399,7 +399,7 @@ const GetAdminProfile = async (req, res) => {
     }
 
     const employees = await UserModel.find({ "createdBy.email": admin.email });
-    const tasks = await TaskModel.find({ createdBy: adminId });
+    const tasks = await TaskModel.find({ assignedBy: adminId });
 
     // ✅ 3. OPTIONAL: ADD STATS (dynamic or placeholder)
     const data = {
