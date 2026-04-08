@@ -7,7 +7,6 @@ import {
   Calendar,
   User,
   Building,
-  BadgeCheck,
   Settings,
 } from "lucide-react";
 
@@ -16,25 +15,22 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔥 GET ADMIN FROM LOCAL STORAGE
   let localAdmin = {};
   try {
     localAdmin = JSON.parse(localStorage.getItem("admin")) || {};
-  } catch {
-    localAdmin = {};
-  }
+  } catch {}
 
   const adminId = localAdmin?.id || localAdmin?._id;
 
-  // 🔥 FETCH ADMIN DATA
   const fetchAdmin = async () => {
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/admin/profile/${adminId}`,
       );
       setAdmin(res.data.data);
-    } catch (err) {
-      setError("Failed to load admin profile", err.message);
+      console.log(res.data)
+    } catch {
+      setError("Failed to load admin profile");
     } finally {
       setLoading(false);
     }
@@ -48,108 +44,171 @@ const Profile = () => {
   if (error) return <Centered text={error} error />;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        {/* 🔥 HEADER */}
-        <div className="bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-xl p-6 shadow-md">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white text-gray-900 flex items-center justify-center text-xl font-bold">
-                {admin?.name?.charAt(0)?.toUpperCase()}
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* HEADER */}
+        <div className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white rounded-2xl p-6 shadow-lg">
+          <div className="flex flex-col md:flex-row justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-xl font-semibold">
+                {admin?.name?.charAt(0)}
               </div>
 
               <div>
-                <h1 className="text-lg font-semibold">{admin?.name}</h1>
-                <p className="text-sm opacity-80">
-                  {admin?.role || "Administrator"}
-                </p>
+                <h1 className="text-xl font-semibold">{admin?.name}</h1>
 
-                <span className="inline-block mt-1 text-xs px-2 py-1 bg-white/20 rounded">
-                  Admin ID: {admin?._id?.slice(-6) || "ADM-001"}
-                </span>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs px-2 py-1 bg-white/20 rounded">
+                    {admin?.role || "Admin"}
+                  </span>
+
+                  <span className="text-xs px-2 py-1 bg-green-400/20 text-green-100 rounded">
+                    ● Active
+                  </span>
+                </div>
+
+                <p className="text-xs mt-2 opacity-80">
+                  Admin ID: {admin?._id?.slice(-6)}
+                </p>
               </div>
             </div>
 
-            <span className="text-xs bg-green-500/20 px-2 py-1 rounded">
-              Active
-            </span>
+            <div className="text-sm space-y-1 text-white/90">
+              <p>Email: {admin?.email}</p>
+              <p>Phone: {admin?.phone || "N/A"}</p>
+              <p>Last Login: {formatDate(admin?.lastLogin)}</p>
+            </div>
           </div>
         </div>
 
-        {/* 🔥 GRID */}
+        {/* GRID */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-6">
-            <Section title="Administrator Information">
+            <Section title="Administrator Details">
               <Grid>
-                <Card icon={<User />} label="Full Name" value={admin?.name} />
-                <Card icon={<Mail />} label="Email" value={admin?.email} />
-                <Card icon={<Phone />} label="Phone" value={admin?.phone} />
-                <Card
+                <Info
+                  icon={<User />}
+                  label="Full Name"
+                  value={admin?.name}
+                  color="indigo"
+                />
+                <Info
+                  icon={<Mail />}
+                  label="Email"
+                  value={admin?.email}
+                  color="blue"
+                />
+                <Info
+                  icon={<Phone />}
+                  label="Phone"
+                  value={admin?.phone}
+                  color="green"
+                />
+                <Info
                   icon={<Shield />}
                   label="Role"
-                  value={admin?.role || "Admin"}
+                  value={admin?.role}
+                  color="purple"
                 />
               </Grid>
             </Section>
 
-            <Section title="Organization Details">
+            <Section title="Organization Information">
               <Grid>
-                <Card
+                <Info
                   icon={<Building />}
                   label="Organization"
-                  value={admin?.organization || "TaskFlow Inc."}
+                  value={admin?.organization || "TaskFlow"}
+                  color="indigo"
                 />
-                <Card
+                <Info
                   icon={<Settings />}
-                  label="System Access"
+                  label="Access Level"
                   value="Full Access"
+                  color="blue"
                 />
-                <Card
+                <Info
                   icon={<Calendar />}
-                  label="Account Created"
+                  label="Created"
                   value={formatDate(admin?.createdAt)}
+                  color="green"
                 />
-                <Card
+                <Info
                   icon={<Calendar />}
-                  label="Last Updated"
+                  label="Updated"
                   value={formatDate(admin?.updatedAt)}
+                  color="purple"
                 />
               </Grid>
+            </Section>
+
+            <Section title="Activity Overview">
+              <ul className="text-sm text-gray-600 space-y-2">
+                <li className="flex justify-between">
+                  <span>Employees Managed</span>
+                  <span className="font-medium text-indigo-600">
+                    {admin?.stats?.employees || 0}
+                  </span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Tasks Created</span>
+                  <span className="font-medium text-blue-600">
+                    {admin?.stats?.tasks || 0}
+                  </span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Departments</span>
+                  <span className="font-medium text-purple-600">
+                    {admin?.stats?.departments || 0}
+                  </span>
+                </li>
+              </ul>
             </Section>
           </div>
 
           {/* RIGHT */}
           <div className="space-y-6">
-            {/* 🔥 MANAGEMENT SUMMARY */}
-            <Section title="Management Summary">
-              <div className="grid grid-cols-2 gap-4">
-                <Stat label="Employees" value={admin?.stats?.employees || 0} />
-                <Stat label="Tasks Created" value={admin?.stats?.tasks || 0} />
+            <Section title="System Summary">
+              <div className="space-y-3">
+                <Stat
+                  label="Employees"
+                  value={admin?.stats?.employees || 0}
+                  color="indigo"
+                />
+                <Stat
+                  label="Tasks"
+                  value={admin?.stats?.tasks || 0}
+                  color="blue"
+                />
                 <Stat
                   label="Departments"
                   value={admin?.stats?.departments || 0}
+                  color="purple"
                 />
-                <Stat label="Active Users" value={admin?.stats?.active || 0} />
+                <Stat
+                  label="Active Users"
+                  value={admin?.stats?.active || 0}
+                  color="green"
+                />
               </div>
             </Section>
 
-            {/* 🔥 PERMISSIONS */}
             <Section title="Permissions">
-              <div className="space-y-2 text-sm text-gray-600">
-                <p>✔ Manage Employees</p>
-                <p>✔ Assign Tasks</p>
-                <p>✔ View Reports</p>
-                <p>✔ System Configuration</p>
-              </div>
+              <ul className="text-sm space-y-2 text-gray-600">
+                <li className="text-green-600">✔ Manage Employees</li>
+                <li className="text-green-600">✔ Assign Tasks</li>
+                <li className="text-green-600">✔ View Reports</li>
+                <li className="text-green-600">✔ System Config</li>
+              </ul>
             </Section>
 
-            {/* 🔥 SYSTEM INFO */}
             <Section title="System Info">
-              <p className="text-xs text-gray-500">
-                Last login: {formatDate(admin?.lastLogin)}
-              </p>
-              <p className="text-xs text-gray-500">Environment: Production</p>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>Environment: Production</p>
+                <p>Last Login: {formatDate(admin?.lastLogin)}</p>
+                <p>Status: Active</p>
+              </div>
             </Section>
           </div>
         </div>
@@ -158,11 +217,13 @@ const Profile = () => {
   );
 };
 
-/* ================= COMPONENTS ================= */
+/* UI COMPONENTS */
 
 const Section = ({ title, children }) => (
-  <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm">
-    <h2 className="text-sm font-semibold text-gray-900 mb-4">{title}</h2>
+  <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition">
+    <h2 className="text-sm font-semibold text-gray-800 mb-4 border-b pb-2">
+      {title}
+    </h2>
     {children}
   </div>
 );
@@ -171,9 +232,19 @@ const Grid = ({ children }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
 );
 
-const Card = ({ icon, label, value }) => (
-  <div className="flex items-center gap-3">
-    <div className="text-gray-700">{icon}</div>
+const Info = ({ icon, label, value, color }) => (
+  <div className="flex items-start gap-3">
+    <div
+      className={`mt-1 
+      ${color === "indigo" && "text-indigo-500"}
+      ${color === "blue" && "text-blue-500"}
+      ${color === "green" && "text-green-500"}
+      ${color === "purple" && "text-purple-500"}
+    `}
+    >
+      {icon}
+    </div>
+
     <div>
       <p className="text-xs text-gray-500">{label}</p>
       <p className="text-sm font-medium text-gray-900">
@@ -183,10 +254,19 @@ const Card = ({ icon, label, value }) => (
   </div>
 );
 
-const Stat = ({ label, value }) => (
-  <div className="bg-gray-50 border border-gray-100 rounded-lg p-4 text-center">
-    <p className="text-lg font-semibold text-gray-900">{value}</p>
-    <p className="text-xs text-gray-500">{label}</p>
+const Stat = ({ label, value, color }) => (
+  <div className="flex justify-between items-center border-b pb-2">
+    <p className="text-sm text-gray-600">{label}</p>
+    <p
+      className={`text-sm font-semibold 
+      ${color === "indigo" && "text-indigo-600"}
+      ${color === "blue" && "text-blue-600"}
+      ${color === "purple" && "text-purple-600"}
+      ${color === "green" && "text-green-600"}
+    `}
+    >
+      {value}
+    </p>
   </div>
 );
 
@@ -198,8 +278,7 @@ const Centered = ({ text, error }) => (
   </div>
 );
 
-const formatDate = (date) => {
-  return date ? new Date(date).toLocaleDateString() : "N/A";
-};
+const formatDate = (date) =>
+  date ? new Date(date).toLocaleDateString() : "N/A";
 
 export default Profile;

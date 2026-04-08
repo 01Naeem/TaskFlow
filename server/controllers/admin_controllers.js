@@ -234,7 +234,7 @@ const Employees = async (req, res) => {
 
 const AssignTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, priority, dueDate, createdBy } =
+    const { title, description, assignedTo, priority, dueDate, assignedBy } =
       req.body;
 
     // ✅ 1. VALIDATION
@@ -262,7 +262,7 @@ const AssignTask = async (req, res) => {
       priority,
       dueDate,
       assignedTo,
-      createdBy: createdBy.id, // Store admin ID for reference
+      assignedBy, // Store admin ID for reference
     });
 
     // ✅ 4. FORMAT DATE
@@ -274,19 +274,23 @@ const AssignTask = async (req, res) => {
     const adminName = req.body.createdBy?.name || "Admin";
 
     // ✅ 6. SEND EMAIL (NON-BLOCKING SAFE)
-    sendTaskEmail({
-      name: employee.name,
-      email: employee.email,
-      title,
-      description,
-      priority,
-      dueDate: formattedDate,
-      adminName,
-      taskId: task._id,
-      taskLink: "http://localhost:5173/employee/tasks",
-    }).catch((err) => {
+    try {
+      await sendTaskEmail({
+        name: employee.name,
+        email: employee.email,
+        title,
+        description,
+        priority,
+        dueDate: formattedDate,
+        adminName,
+        taskId: task._id,
+        taskLink: "http://localhost:5173/employee/tasks",
+      });
+
+      console.log("✅ Email function executed");
+    } catch (err) {
       console.error("📧 Email Error:", err.message);
-    });
+    }
 
     // ✅ 7. RESPONSE (ONLY ONCE)
     return res.status(201).json({
@@ -385,7 +389,7 @@ const GetAdminProfile = async (req, res) => {
     }
 
     // ✅ 2. FIND ADMIN (exclude password)
-    const admin = await AdminModel.findById(adminId).select("-password");
+    const admin = await AdminModel.findById(adminId)
 
     if (!admin) {
       return res.status(404).json({
@@ -394,14 +398,17 @@ const GetAdminProfile = async (req, res) => {
       });
     }
 
+    const employees = await UserModel.find({ "createdBy.email": admin.email });
+    const tasks = await TaskModel.find({ createdBy: adminId });
+
     // ✅ 3. OPTIONAL: ADD STATS (dynamic or placeholder)
     const data = {
       ...admin.toObject(),
       stats: {
-        employees: 0, // replace with real count later
-        tasks: 0,
-        departments: 0,
-        active: 0,
+        employees: employees.length,
+        tasks: tasks.length,
+        departments: [...new Set(employees.map((e) => e.department))].length,
+        active: tasks.filter((t) => t.status === "active").length,
       },
     };
 

@@ -58,8 +58,8 @@ const TaskSchema = new mongoose.Schema(
       },
     ],
 
-    // 🧑‍💼 CREATED BY ADMIN
-    createdBy: {
+    // 🧑‍💼 ASSIGNED BY ADMIN
+    assignedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",
     },

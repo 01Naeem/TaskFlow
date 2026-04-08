@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const menu = [
     { name: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
     { name: "Tasks", path: "/admin/tasks", icon: ListTodo },
-    { name: "Assignments", path: "/admin/tasks/assign", icon: UserPlus },
+    { name: "Assignments", path: "/admin/employees/create-employee", icon: UserPlus },
     { name: "Employees", path: "/admin/employees", icon: Users },
   ];
 
@@ -89,8 +89,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </button>
 
             <button
-              on
-              Click={() => navigate("/admin/profile")}
+              onClick={() => navigate("/admin/profile")}
               className="flex items-center gap-3 w-full px-3 py-2 text-sm hover:bg-gray-50 rounded-lg"
             >
               <User size={18} />

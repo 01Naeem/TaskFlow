@@ -7,6 +7,7 @@ const AssignTask = () => {
     title: "",
     description: "",
     assignedTo: "",
+    assignedBy: "",
     priority: "medium",
     dueDate: "",
     createdBy: {},
@@ -19,8 +20,8 @@ const AssignTask = () => {
   const [searchParams] = useSearchParams();
   const selectedEmployee = searchParams.get("employee");
 
-  const createdBy = JSON.parse(localStorage.getItem("admin") || "{}");
-  console.log(form.createdBy)
+  const assignedBy = JSON.parse(localStorage.getItem("admin") || "{}");
+  console.log(form.assignedBy.id)
 
   const fetchEmployees = async () => {
     try {
@@ -40,7 +41,7 @@ const AssignTask = () => {
     if (selectedEmployee) {
       setForm((prev) => ({
         ...prev,
-        createdBy: createdBy,
+        assignedBy: assignedBy.id,
         assignedTo: selectedEmployee,
       }));
       setLocked(true); // ✅ lock only initially
