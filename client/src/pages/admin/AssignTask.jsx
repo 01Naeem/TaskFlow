@@ -21,7 +21,6 @@ const AssignTask = () => {
   const selectedEmployee = searchParams.get("employee");
 
   const assignedBy = JSON.parse(localStorage.getItem("admin") || "{}");
-  console.log(form.assignedBy.id)
 
   const fetchEmployees = async () => {
     try {

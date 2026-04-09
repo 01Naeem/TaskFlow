@@ -1,45 +1,61 @@
-const nodemailer = require("nodemailer");
-
-// ✅ Ensure env is loaded (only once in your app entry ideally)
+const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
-// 🔥 CREATE TRANSPORTER
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// 🔐 VALIDATE ENV VARIABLES AT STARTUP
+if (!process.env.SENDGRID_API_KEY) {
+  throw new Error("❌ SENDGRID_API_KEY is missing in .env");
+}
 
-// 🔥 VERIFY CONNECTION (VERY IMPORTANT FOR DEBUG)
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ Email Config Error:", error);
-  } else {
-    console.log("✅ Email server is ready");
-  }
-});
+if (!process.env.SENDGRID_FROM_EMAIL) {
+  throw new Error("❌ SENDGRID_FROM_EMAIL is missing in .env");
+}
 
-// 🔥 SEND EMAIL FUNCTION
-const sendEmail = async ({ to, subject, html }) => {
+// 🔑 SET API KEY
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// 🔥 MAIN SEND EMAIL FUNCTION
+const sendEmail = async ({ to, subject, html, text }) => {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      throw new Error("Email credentials missing in environment variables");
+    // 🧪 BASIC VALIDATION
+    if (!to || !subject || (!html && !text)) {
+      throw new Error("Missing required fields: to, subject, html/text");
     }
 
-    const info = await transporter.sendMail({
-      from: `"TaskFlow" <${process.env.EMAIL_USER}>`,
+    const msg = {
       to,
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL,
+        name: "TaskFlow", // Sender name
+      },
       subject,
-      html,
-    });
+      text: text || "This is a test email from TaskFlow",
+      html: html || `<p>This is a test email from <b>TaskFlow</b></p>`,
+    };
 
-    console.log("📧 Email sent:", info.messageId);
-    return info;
+    // 🚀 SEND EMAIL
+    const response = await sgMail.send(msg);
+
+    console.log("✅ Email sent successfully");
+    console.log("📨 Status Code:", response[0].statusCode);
+
+    return {
+      success: true,
+      statusCode: response[0].statusCode,
+    };
   } catch (error) {
-    console.error("❌ Email Error:", error.message);
-    throw error;
+    console.error("❌ Email sending failed");
+
+    // 🔍 DETAILED ERROR LOGGING
+    if (error.response) {
+      console.error("📛 SendGrid Error:", error.response.body);
+    } else {
+      console.error("📛 Error:", error.message);
+    }
+
+    return {
+      success: false,
+      error: error.response?.body || error.message,
+    };
   }
 };
 

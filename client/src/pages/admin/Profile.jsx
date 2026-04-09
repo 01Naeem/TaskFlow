@@ -18,7 +18,9 @@ const Profile = () => {
   let localAdmin = {};
   try {
     localAdmin = JSON.parse(localStorage.getItem("admin")) || {};
-  } catch {}
+  } catch {
+    localAdmin = {};
+  }
 
   const adminId = localAdmin?.id || localAdmin?._id;
 
