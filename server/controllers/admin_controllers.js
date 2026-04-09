@@ -233,7 +233,7 @@ const Employees = async (req, res) => {
 
 const AssignTask = async (req, res) => {
   try {
-    const { title, description, assignedTo, priority, dueDate, assignedBy } =
+    const { title, description, assignedTo, assignedBy, priority, dueDate } =
       req.body;
 
     // ✅ 1. VALIDATION
@@ -261,7 +261,7 @@ const AssignTask = async (req, res) => {
       priority,
       dueDate,
       assignedTo,
-      assignedBy, // Store admin ID for reference
+      assignedBy,
     });
 
     // ✅ 4. FORMAT DATE

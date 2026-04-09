@@ -10,7 +10,6 @@ const AssignTask = () => {
     assignedBy: "",
     priority: "medium",
     dueDate: "",
-    createdBy: {},
   });
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
