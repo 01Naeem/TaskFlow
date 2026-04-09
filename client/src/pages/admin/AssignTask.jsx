@@ -36,10 +36,15 @@ const AssignTask = () => {
   };
   useEffect(() => {
     fetchEmployees();
+
+    setForm((prev) => ({
+      ...prev,
+      assignedBy: assignedBy.id,
+    }));
+
     if (selectedEmployee) {
       setForm((prev) => ({
         ...prev,
-        assignedBy: assignedBy.id,
         assignedTo: selectedEmployee,
       }));
       setLocked(true); // ✅ lock only initially
@@ -57,7 +62,10 @@ const AssignTask = () => {
     }
     try {
       setLoading(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/admin/tasks/assign`, form);
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/admin/tasks/assign`,
+        form,
+      );
       alert("Task assigned successfully");
       navigate("/admin/tasks");
     } catch (error) {
